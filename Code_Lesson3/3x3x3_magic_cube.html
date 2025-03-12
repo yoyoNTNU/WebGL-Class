@@ -48,19 +48,18 @@
 		function drawScene(){
 			gl.LoadIdentity('view');
 			gl.LoadIdentity('model');
-			gl.Translate('model', [0.0, 0.0, -10.0]);
+			gl.Translate('model', [0.0, 0.0, -20.0]);
 			gl.Rotate("model", 30 + viewRotate[0], [1, 0, 0]);
 			gl.Rotate("model", 30 + viewRotate[1], [0, 1, 0]);
 			gl.Rotate("model", viewRotate[2], [0, 0, 1]);
-			for(let x=0; x<2; x++){
-				for(let y=0;y<2;y++){
-					for(let z=0;z<2;z++){
-						// if(x*4+y*2+z!=0)continue;
+			for(let x=0; x<3; x++){
+				for(let y=0;y<3;y++){
+					for(let z=0;z<3;z++){
 						gl.PushMatrix("model");
-						let is_last4 = is_need_animation? last4.includes(x*4+y*2+z): false;
-						let len = is_last4? rotateStack[x*4+y*2+z].length - 1: rotateStack[x*4+y*2+z].length;
+						let is_last9 = is_need_animation? last9.includes(x*9+y*3+z): false;
+						let len = is_last9? rotateStack[x*9+y*3+z].length - 1: rotateStack[x*9+y*3+z].length;
 						for(let i=0;i<len;i+=1){
-							let rotate_axis = rotateStack[x*4+y*2+z][i];
+							let rotate_axis = rotateStack[x*9+y*3+z][i];
 							if(rotate_axis==1){
 								gl.Rotate("model", 90, [1, 0, 0]);
 							}else if(rotate_axis==2){
@@ -75,8 +74,8 @@
 								gl.Rotate("model", -90, [0, 0, 1]);
 							}
 						}
-						if(is_last4){
-							let rotate_axis = rotateStack[x*4+y*2+z][len];
+						if(is_last9){
+							let rotate_axis = rotateStack[x*9+y*3+z][len];
 							if(rotate_axis==1){
 								gl.Rotate("model", Math.min(rot_angle,90), [1, 0, 0]);
 							}else if(rotate_axis==2){
@@ -91,7 +90,7 @@
 								gl.Rotate("model", -Math.min(rot_angle,90), [0, 0, 1]);
 							}
 						}
-						gl.Translate("model", [x*2-1, y*2-1, z*2-1]);
+						gl.Translate("model", [x*2-2, y*2-2, z*2-2]);
 						gl.Begin(gl.TRIANGLES);
 							// Front face
 							gl.Color(1.0, 0.0, 0.0);
@@ -181,13 +180,15 @@
 
 	  var viewRotate = [0,0,0]
 	  var currentlyPressedKeys = {};
-	  var cubeAxis = [[1,2,3],[1,2,3],
-	  					[1,2,3],[1,2,3],
-	  					[1,2,3],[1,2,3],
-						[1,2,3],[1,2,3]]; //x:1,y:2,z:3
-	  var cubepos = [0,1,2,3,4,5,6,7];
-	  var rotateStack = [[],[],[],[],[],[],[],[]];
-	  var last4 = [];
+	  var cubeAxis = [[1,2,3],[1,2,3],[1,2,3], [1,2,3],[1,2,3],[1,2,3], [1,2,3],[1,2,3],[1,2,3],
+	  				  [1,2,3],[1,2,3],[1,2,3], [1,2,3],[1,2,3],[1,2,3], [1,2,3],[1,2,3],[1,2,3],
+					  [1,2,3],[1,2,3],[1,2,3], [1,2,3],[1,2,3],[1,2,3], [1,2,3],[1,2,3],[1,2,3]];
+
+	  var cubepos = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
+	  var rotateStack = [[],[],[], [],[],[], [],[],[],
+	  					 [],[],[], [],[],[], [],[],[],
+						 [],[],[], [],[],[], [],[],[]];
+	  var last9 = [];
 	  var is_need_animation = true;
 		
 	//1357前 0246後
@@ -216,12 +217,12 @@
 		}
 
 		if (currentlyPressedKeys[82]){
-			for(let i=0;i<8;++i){
+			for(let i=0;i<27;++i){
 				rotateStack[i] = [];
 				cubeAxis[i] = [1,2,3];
 			}
-			cubepos = [0,1,2,3,4,5,6,7];
-			last4 = [];
+			cubepos = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
+			last9 = [];
 			rot_angle = 0;
 			currentlyPressedKeys[82] = false
 		}
@@ -230,92 +231,158 @@
 
 		// 左面繞x軸(1,0,0)逆時針轉90度
 		if (currentlyPressedKeys[81] ||currentlyPressedKeys[103] ) {
-			last4 = [];
-			for(let i=0;i<4;i+=1){//q
+			last9 = [];
+			for(let i=0;i<9;i+=1){//q
 				let p = cubepos[i];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = cubeAxis[p][0];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [cubeAxis[p][0],-cubeAxis[p][2],cubeAxis[p][1]];
 			}
-			cubepos = [cubepos[1],cubepos[3],cubepos[0],cubepos[2],cubepos[4],cubepos[5],cubepos[6],cubepos[7]];
+			cubepos = [cubepos[2],cubepos[5],cubepos[8],cubepos[1],cubepos[4],cubepos[7],cubepos[0],cubepos[3],cubepos[6],
+					   cubepos[9],cubepos[10],cubepos[11],cubepos[12],cubepos[13],cubepos[14],cubepos[15],cubepos[16],cubepos[17],
+					   cubepos[18],cubepos[19],cubepos[20],cubepos[21],cubepos[22],cubepos[23],cubepos[24],cubepos[25],cubepos[26]];
 			currentlyPressedKeys[81] = false
 			currentlyPressedKeys[103] = false
 			rot_angle = 0;
 		}
-		// 右面繞x軸(1,0,0)逆時針轉90度
-		if (currentlyPressedKeys[87]|| currentlyPressedKeys[97]) {
-			last4 = [];
-			for(let i=4;i<8;i+=1){ 
+		// 中面繞x軸(1,0,0)逆時針轉90度
+		if (currentlyPressedKeys[87]) {
+			last9 = [];
+			for(let i=9;i<18;i+=1){ 
 				let p = cubepos[i];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = cubeAxis[p][0];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [cubeAxis[p][0],-cubeAxis[p][2],cubeAxis[p][1]];
 			}
-			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[3],cubepos[5],cubepos[7],cubepos[4],cubepos[6]];
+			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[3],cubepos[4],cubepos[5],cubepos[6],cubepos[7],cubepos[8],
+					   cubepos[11],cubepos[14],cubepos[17],cubepos[10],cubepos[13],cubepos[16],cubepos[9],cubepos[12],cubepos[15],
+					   cubepos[18],cubepos[19],cubepos[20],cubepos[21],cubepos[22],cubepos[23],cubepos[24],cubepos[25],cubepos[26]];
 			currentlyPressedKeys[87] = false
+			rot_angle = 0;
+		}
+
+
+		// 右面繞x軸(1,0,0)逆時針轉90度
+		if (currentlyPressedKeys[69]|| currentlyPressedKeys[97]) {
+			last9 = [];
+			for(let i=18;i<27;i+=1){ 
+				let p = cubepos[i];
+				last9.push(p);
+				let rotate_axis = cubeAxis[p][0];
+				rotateStack[p].push(rotate_axis);
+				cubeAxis[p] = [cubeAxis[p][0],-cubeAxis[p][2],cubeAxis[p][1]];
+			}
+			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[3],cubepos[4],cubepos[5],cubepos[6],cubepos[7],cubepos[8],
+					   cubepos[9],cubepos[10],cubepos[11],cubepos[12],cubepos[13],cubepos[14],cubepos[15],cubepos[16],cubepos[17],
+					   cubepos[20],cubepos[23],cubepos[26],cubepos[19],cubepos[22],cubepos[25],cubepos[18],cubepos[21],cubepos[24]];
+			currentlyPressedKeys[69] = false
 			currentlyPressedKeys[97] = false
 			rot_angle = 0;
 		}
 
 		// 前面繞z軸(0,0,1)逆時針轉90度
 		if (currentlyPressedKeys[65] || currentlyPressedKeys[99]) {
-			last4 = [];
-			for(let i=1;i<8;i+=2){ 
+			last9 = [];
+			for(let i=2;i<27;i+=3){ 
 				let p = cubepos[i];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = cubeAxis[p][2];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [-cubeAxis[p][1],cubeAxis[p][0],cubeAxis[p][2]];
 			}
-			cubepos = [cubepos[0],cubepos[3],cubepos[2],cubepos[7],cubepos[4],cubepos[1],cubepos[6],cubepos[5]];
+			cubepos = [cubepos[0],cubepos[1],cubepos[8],cubepos[3],cubepos[4],cubepos[17],cubepos[6],cubepos[7],cubepos[26],
+					   cubepos[9],cubepos[10],cubepos[5],cubepos[12],cubepos[13],cubepos[14],cubepos[15],cubepos[16],cubepos[23],
+					   cubepos[18],cubepos[19],cubepos[2],cubepos[21],cubepos[22],cubepos[11],cubepos[24],cubepos[25],cubepos[20]];
 			currentlyPressedKeys[65] = false
 			currentlyPressedKeys[99] = false
 			rot_angle = 0;
 		}
-		// 後面繞z軸(0,0,1)逆時針轉90度
+		// 中間繞z軸(0,0,1)逆時針轉90度
 		if (currentlyPressedKeys[83]) {
-			last4 = [];
-			for(let i=0;i<8;i+=2){ 
+			last9 = [];
+			for(let i=1;i<27;i+=3){ 
 				let p = cubepos[i];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = cubeAxis[p][2];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [-cubeAxis[p][1],cubeAxis[p][0],cubeAxis[p][2]];
 			}
-			cubepos = [cubepos[2],cubepos[1],cubepos[6],cubepos[3],cubepos[0],cubepos[5],cubepos[4],cubepos[7]];
+			cubepos = [cubepos[0],cubepos[7],cubepos[2],cubepos[3],cubepos[16],cubepos[5],cubepos[6],cubepos[25],cubepos[8],
+					   cubepos[9],cubepos[4],cubepos[11],cubepos[12],cubepos[13],cubepos[14],cubepos[15],cubepos[22],cubepos[17],
+					   cubepos[18],cubepos[1],cubepos[20],cubepos[21],cubepos[10],cubepos[23],cubepos[24],cubepos[19],cubepos[26]];
 			currentlyPressedKeys[83] = false
+			rot_angle = 0;
+		}
+
+		// 後面繞z軸(0,0,1)逆時針轉90度
+		if (currentlyPressedKeys[68]) {
+			last9 = [];
+			for(let i=0;i<27;i+=3){ 
+				let p = cubepos[i];
+				last9.push(p);
+				let rotate_axis = cubeAxis[p][2];
+				rotateStack[p].push(rotate_axis);
+				cubeAxis[p] = [-cubeAxis[p][1],cubeAxis[p][0],cubeAxis[p][2]];
+			}
+			cubepos = [cubepos[6],cubepos[1],cubepos[2],cubepos[15],cubepos[4],cubepos[5],cubepos[24],cubepos[7],cubepos[8],
+					   cubepos[3],cubepos[10],cubepos[11],cubepos[12],cubepos[13],cubepos[14],cubepos[21],cubepos[16],cubepos[17],
+					   cubepos[0],cubepos[19],cubepos[20],cubepos[9],cubepos[22],cubepos[23],cubepos[18],cubepos[25],cubepos[26]];
+			currentlyPressedKeys[68] = false
 			rot_angle = 0;
 		}
 		// 下面繞y軸(0,1,0)逆時針轉90度
 		if(currentlyPressedKeys[90]){
-			last4 = [];
-			let list = [0,1,4,5];
-			for(let i=0;i<4;i+=1){
+			last9 = [];
+			let list = [0,1,2,9,10,11,18,19,20];
+			for(let i=0;i<9;i+=1){
 				let p = cubepos[list[i]];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = cubeAxis[p][1];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [cubeAxis[p][2],cubeAxis[p][1],-cubeAxis[p][0]];
 			}
-			cubepos = [cubepos[4],cubepos[0],cubepos[2],cubepos[3],cubepos[5],cubepos[1],cubepos[6],cubepos[7]];
+			cubepos = [cubepos[18],cubepos[9],cubepos[0],cubepos[3],cubepos[4],cubepos[5],cubepos[6],cubepos[7],cubepos[8],
+					   cubepos[19],cubepos[10],cubepos[1],cubepos[12],cubepos[13],cubepos[14],cubepos[15],cubepos[16],cubepos[17],
+					   cubepos[20],cubepos[11],cubepos[2],cubepos[21],cubepos[22],cubepos[23],cubepos[24],cubepos[25],cubepos[26]];
 			currentlyPressedKeys[90] = false
 			rot_angle = 0;
 		}
-		// 上面繞y軸(0,1,0)逆時針轉90度
-		if(currentlyPressedKeys[88] || currentlyPressedKeys[98]){
-			last4 = [];
-			let list = [2,3,6,7];
-			for(let i=0;i<4;i+=1){
+
+		// 中層繞y軸(0,1,0)逆時針轉90度
+		if(currentlyPressedKeys[88]){
+			last9 = [];
+			let list = [3,4,5,12,13,14,21,22,23];
+			for(let i=0;i<9;i+=1){
 				let p = cubepos[list[i]];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = cubeAxis[p][1];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [cubeAxis[p][2],cubeAxis[p][1],-cubeAxis[p][0]];
 			}
-			cubepos = [cubepos[0],cubepos[1],cubepos[6],cubepos[2],cubepos[4],cubepos[5],cubepos[7],cubepos[3]];
+			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[21],cubepos[12],cubepos[3],cubepos[6],cubepos[7],cubepos[8],
+					   cubepos[9],cubepos[10],cubepos[11],cubepos[22],cubepos[13],cubepos[4],cubepos[15],cubepos[16],cubepos[17],
+					   cubepos[18],cubepos[19],cubepos[20],cubepos[23],cubepos[14],cubepos[5],cubepos[24],cubepos[25],cubepos[26]];
 			currentlyPressedKeys[88] = false
+			rot_angle = 0;
+		}
+
+		// 上面繞y軸(0,1,0)逆時針轉90度
+		if(currentlyPressedKeys[67] || currentlyPressedKeys[98]){
+			last9 = [];
+			let list = [6,7,8,15,16,17,24,25,26];
+			for(let i=0;i<9;i+=1){
+				let p = cubepos[list[i]];
+				last9.push(p);
+				let rotate_axis = cubeAxis[p][1];
+				rotateStack[p].push(rotate_axis);
+				cubeAxis[p] = [cubeAxis[p][2],cubeAxis[p][1],-cubeAxis[p][0]];
+			}
+			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[3],cubepos[4],cubepos[5],cubepos[24],cubepos[15],cubepos[6],
+					   cubepos[9],cubepos[10],cubepos[11],cubepos[12],cubepos[13],cubepos[14],cubepos[25],cubepos[16],cubepos[7],
+					   cubepos[18],cubepos[19],cubepos[20],cubepos[21],cubepos[22],cubepos[23],cubepos[26],cubepos[17],cubepos[8]];
+			currentlyPressedKeys[67] = false
 			currentlyPressedKeys[98] = false
 			rot_angle = 0;
 		}
@@ -328,45 +395,51 @@
 		
 		// 4 右邊往後轉
 		if(currentlyPressedKeys[100]){
-			last4 = [];
-			for(let i=4;i<8;i+=1){ 
+			last9 = [];
+			for(let i=18;i<27;i+=1){ 
 				let p = cubepos[i];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = -cubeAxis[p][0];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [cubeAxis[p][0],cubeAxis[p][2],-cubeAxis[p][1]];
 			}
-			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[3],cubepos[6],cubepos[4],cubepos[7],cubepos[5]];
+			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[3],cubepos[4],cubepos[5],cubepos[6],cubepos[7],cubepos[8],
+					   cubepos[9],cubepos[10],cubepos[11],cubepos[12],cubepos[13],cubepos[14],cubepos[15],cubepos[16],cubepos[17],
+					   cubepos[24],cubepos[21],cubepos[18],cubepos[25],cubepos[22],cubepos[19],cubepos[26],cubepos[23],cubepos[20]];
 			currentlyPressedKeys[100] = false
 			rot_angle = 0;
 		}
 
 		// 5 上面往左轉
 		if(currentlyPressedKeys[101]){
-			last4 = [];
-			let list = [2,3,6,7];
-			for(let i=0;i<4;i+=1){
+			last9 = [];
+			let list = [6,7,8,15,16,17,24,25,26];
+			for(let i=0;i<9;i+=1){
 				let p = cubepos[list[i]];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = -cubeAxis[p][1];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [-cubeAxis[p][2],cubeAxis[p][1],cubeAxis[p][0]];
 			}
-			cubepos = [cubepos[0],cubepos[1],cubepos[3],cubepos[7],cubepos[4],cubepos[5],cubepos[2],cubepos[6]];
+			cubepos = [cubepos[0],cubepos[1],cubepos[2],cubepos[3],cubepos[4],cubepos[5],cubepos[8],cubepos[17],cubepos[26],
+					   cubepos[9],cubepos[10],cubepos[11],cubepos[12],cubepos[13],cubepos[14],cubepos[7],cubepos[16],cubepos[25],
+					   cubepos[18],cubepos[19],cubepos[20],cubepos[21],cubepos[22],cubepos[23],cubepos[6],cubepos[15],cubepos[24]];
 			currentlyPressedKeys[101] = false
 			rot_angle = 0;
 		}
 		// 6 前面往右轉
 		if(currentlyPressedKeys[102]){
-			last4 = [];
-			for(let i=1;i<8;i+=2){ 
+			last9 = [];
+			for(let i=2;i<27;i+=3){ 
 				let p = cubepos[i];
-				last4.push(p);
+				last9.push(p);
 				let rotate_axis = -cubeAxis[p][2];
 				rotateStack[p].push(rotate_axis);
 				cubeAxis[p] = [cubeAxis[p][1],-cubeAxis[p][0],cubeAxis[p][2]];
 			}
-			cubepos = [cubepos[0],cubepos[5],cubepos[2],cubepos[1],cubepos[4],cubepos[7],cubepos[6],cubepos[3]];
+			cubepos = [cubepos[0],cubepos[1],cubepos[20],cubepos[3],cubepos[4],cubepos[11],cubepos[6],cubepos[7],cubepos[2],
+					   cubepos[9],cubepos[10],cubepos[23],cubepos[12],cubepos[13],cubepos[14],cubepos[15],cubepos[16],cubepos[5],
+					   cubepos[18],cubepos[19],cubepos[26],cubepos[21],cubepos[22],cubepos[17],cubepos[24],cubepos[25],cubepos[8]];
 			currentlyPressedKeys[102] = false
 			rot_angle = 0;
 		}
@@ -423,14 +496,14 @@
 		</script>
 	</head>
 	<body onload="webGLStart();">
-		<h2>WebGL Lesson 3 - 2階魔術方塊</h2>
+		<h2>WebGL Lesson 3 - 3階魔術方塊</h2>
 		<canvas id="lesson03-canvas" style="border: none;width:95vw;height:50vh;" width="500" height="500"></canvas>
 		<h3>操作方式</h3>
 		<div style="display: flex; align-items: center;">
 			<p >
-				按下Q鍵: 左面往前轉   按下W鍵: 右面往前轉<br>
-				按下A鍵: 前面往左轉   按下S鍵: 後面往左轉<br>
-				按下Z鍵: 下面往右轉   按下X鍵: 上面往右轉<br>
+				按下Q鍵: 左面往前轉   按下W鍵:中間往前轉 按下E鍵: 右面往前轉<br>
+				按下A鍵: 前面往左轉   按下S鍵:中間往左轉 按下D鍵: 後面往左轉<br>
+				按下Z鍵: 下面往右轉   按下X鍵:中層往右轉 按下C鍵: 上面往右轉<br>
 				按下R鍵: 重置<br>
 				按下V鍵: 視角旋轉     按下Esc鍵: 視角重置<br>
 				按下N鍵: 開啟/停止動畫<br>
